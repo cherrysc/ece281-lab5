@@ -219,10 +219,10 @@ w_sign_mux    <=   "1111111" when (w_sign = '0') else
                    "0111111" when (w_sign = '1');
                    
 --twos comp
-w_display_bin <=  f_A when (w_cycle = "0010") else
-                  f_B when (w_cycle = "0100") else
-                  w_ALU_result when (w_cycle = "1000") else
-                  "00000000";
+w_display_bin <= f_A          when w_cycle = "0010" else
+                 f_B          when w_cycle = "0100" else
+                 w_ALU_result when w_cycle = "1000" else
+                 "00000000";
  
  -- result mux for seven seg
 w_seg_mux <= w_sign_mux when (w_tdm_sel = "0111") else
@@ -242,21 +242,21 @@ an <= w_an_mux;
 led(3 downto 0) <= w_cycle;
 led(15 downto 12) <= w_ALU_flags;
 
-process (w_cycle(1))
+process(w_cycle, btnU)
     begin
-        if btnU = '1' then  
+        if btnU = '1' then
             f_A <= "00000000";
-        elsif rising_edge (w_cycle(1)) then   
-           f_A <= sw;
+        elsif rising_edge(w_cycle(1)) then
+            f_A <= sw;
         end if;
     end process;
 
-process (w_cycle(2))
+process(w_cycle, btnU)
     begin
-        if btnU = '1' then  
+        if btnU = '1' then
             f_B <= "00000000";
-        elsif rising_edge (w_cycle(1)) then   
-           f_B <= sw;
+        elsif rising_edge(w_cycle(2)) then
+            f_B <= sw;
         end if;
     end process;
 	
