@@ -240,8 +240,7 @@ an <= w_an_mux;
 
 --leds
 led(3 downto 0) <= w_cycle;
-led(7 downto 4)  <= w_ALU_flags;
-led(15 downto 8) <= w_ALU_result;
+led(15 downto 12) <= w_ALU_flags;
 
 process (w_cycle(1))
     begin
