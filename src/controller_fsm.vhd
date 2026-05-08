@@ -39,26 +39,31 @@ end controller_fsm;
 
 architecture FSM of controller_fsm is
 
-signal f_Q : std_logic_vector(3 downto 0);
-signal f_Q_next : std_logic_vector(3 downto 0);
-
+    type fsm_state is (clearDisplay, regA, regB, displayResult);
+    signal f_Q, f_q_next    : fsm_state;
+    
 begin
-f_Q_next(0) <= (f_Q(0) and not i_adv) or (f_Q(3) and i_adv);
-f_Q_next(1) <= (f_Q(1) and not i_adv) or (f_Q(0) and i_adv);
-f_Q_next(2) <= (f_Q(2) and not i_adv) or (f_Q(1) and i_adv);
-f_Q_next(3) <= (f_Q(3) and not i_adv) or (f_Q(2) and i_adv);
 
-o_cycle <= f_Q;
+f_Q_next <= regA when (f_Q = clearDisplay) else
+            regB WHEN (f_Q = regA) else
+            displayResult when (f_Q = regB) else
+            clearDisplay when (f_Q = displayResult);
 
-process(i_adv, i_reset, f_Q_next)
-begin
-    if i_reset = '1' then
-        f_Q <= "0001";
+with f_Q select
+    o_cycle <= "0001" when clearDisplay,
+               "0010" when regA,
+               "0100" when regB,
+               "1000" when displayResult;
+               
+ process (i_adv)
+    begin
+        if i_reset = '1' then
+            f_Q <= clearDisplay;
+        elsif rising_edge(i_adv) then   
+            f_Q <= f_Q_next;
+        end if;
+    end process;
 
-    elsif i_adv = '1' then
-        f_Q <= f_Q_next;
-    end if;
-end process;
 
 
 end FSM;
